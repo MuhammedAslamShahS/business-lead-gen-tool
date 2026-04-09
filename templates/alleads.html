@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>All Leads | LeadGen Tool</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand-mark" href="{{ url_for('index') }}">LeadGen Tool</a>
+      <nav class="main-nav">
+        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+        <a class="nav-link active" href="{{ url_for('all_leads_page') }}">All Leads</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section class="results-card page-intro">
+      <div>
+        <p class="eyebrow">Database View</p>
+        <h1 class="page-title">All saved leads from MongoDB.</h1>
+        <p class="hero-text">
+          This page lists businesses already stored in <strong>leadgen_DB.business_leads</strong>.
+        </p>
+      </div>
+      <div class="stats-chip">{{ leads|length }} saved leads</div>
+    </section>
+
+    <section class="results-card">
+      <div class="results-header">
+        <div>
+          <h2>Existing Leads</h2>
+          <p id="results-meta">Browse and filter leads that have already been uploaded to the database.</p>
+        </div>
+        <a class="secondary-button nav-button" href="{{ url_for('index') }}">Back to Home</a>
+      </div>
+
+      <form class="filter-panel" method="get" action="{{ url_for('all_leads_page') }}">
+        <div class="location-grid">
+          <label class="field">
+            <span>Country</span>
+            <input type="text" name="country" value="{{ filters.country }}" placeholder="United States">
+          </label>
+          <label class="field">
+            <span>State / Province</span>
+            <input type="text" name="state" value="{{ filters.state }}" placeholder="Florida">
+          </label>
+          <label class="field">
+            <span>District / Neighborhood</span>
+            <input type="text" name="district" value="{{ filters.district }}" placeholder="Brickell">
+          </label>
+          <label class="field">
+            <span>City</span>
+            <input type="text" name="city" value="{{ filters.city }}" placeholder="Miami">
+          </label>
+        </div>
+
+        <div class="search-actions">
+          <label class="field">
+            <span>Location Text</span>
+            <input type="text" name="location" value="{{ filters.location }}" placeholder="Miami, FL or any location text">
+          </label>
+          <div class="button-row">
+            <button class="primary-button" type="submit">Apply Filters</button>
+            <a class="secondary-button nav-button" href="{{ url_for('all_leads_page') }}">Reset</a>
+          </div>
+        </div>
+      </form>
+
+      {% if error %}
+        <div class="message error">{{ error }}</div>
+      {% else %}
+        <div class="message success">Loaded {{ leads|length }} saved leads.</div>
+      {% endif %}
+
+      <div class="table-shell">
+        <table>
+          <thead>
+            <tr>
+              <th>Business Name</th>
+              <th>Location</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>Website</th>
+              <th>Social Media</th>
+              <th>Saved At</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if leads %}
+              {% for lead in leads %}
+                <tr>
+                  <td>{{ lead.name or 'Not available' }}</td>
+                  <td>{{ lead.location or 'Not available' }}</td>
+                  <td>{{ lead.phone or 'Not available' }}</td>
+                  <td>{{ lead.email or 'Not available' }}</td>
+                  <td>
+                    {% if lead.website and lead.website != 'Not available' %}
+                      <a href="{{ lead.website }}" target="_blank" rel="noopener noreferrer">{{ lead.website }}</a>
+                    {% else %}
+                      Not available
+                    {% endif %}
+                  </td>
+                  <td>
+                    <ul class="social-list">
+                      {% for label, value in lead.socials.items() %}
+                        <li>
+                          <strong>{{ label }}:</strong>
+                          {% if value and value != 'Not available' %}
+                            <a href="{{ value }}" target="_blank" rel="noopener noreferrer">{{ value }}</a>
+                          {% else %}
+                            Not available
+                          {% endif %}
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </td>
+                  <td>{{ lead.created_at_display }}</td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr class="empty-row">
+                <td colspan="7">No saved leads found in the database yet.</td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

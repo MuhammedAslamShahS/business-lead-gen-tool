@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LeadGen Tool</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand-mark" href="{{ url_for('index') }}">LeadGen Tool</a>
+      <nav class="main-nav">
+        <a class="nav-link active" href="{{ url_for('index') }}">Home</a>
+        <a class="nav-link" href="{{ url_for('all_leads_page') }}">All Leads</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero-card">
+      <div class="hero-copy">
+        <p class="eyebrow">Lead Generation</p>
+        <h1>Search public business leads and save only new records.</h1>
+        <p class="hero-text">
+          Enter a location and result limit, search public business details, review them in a table,
+          then upload only non-duplicate records into MongoDB.
+        </p>
+        <div class="hero-actions">
+          <a class="secondary-button nav-button" href="{{ url_for('all_leads_page') }}">View Saved Leads</a>
+        </div>
+      </div>
+
+      <form id="search-form" class="search-panel">
+        <div class="location-grid">
+          <label class="field">
+            <span>Country</span>
+            <input id="country" name="country" type="text" placeholder="United States" value="United States">
+          </label>
+
+          <label class="field">
+            <span>State / Province</span>
+            <input id="state" name="state" type="text" placeholder="Florida" value="Florida">
+          </label>
+
+          <label class="field">
+            <span>District / Neighborhood</span>
+            <input id="district" name="district" type="text" placeholder="Brickell">
+          </label>
+
+          <label class="field">
+            <span>City</span>
+            <input id="city" name="city" type="text" placeholder="Miami" value="Miami">
+          </label>
+        </div>
+
+        <div class="search-actions">
+          <label class="field field-small">
+            <span>Limit</span>
+            <input id="limit" name="limit" type="number" min="1" max="100" value="8" required>
+          </label>
+
+          <button id="search-button" class="primary-button" type="submit">Search</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="results-card">
+      <div class="results-header">
+        <div>
+          <h2>Generated Leads</h2>
+          <p id="results-meta">Search by location to generate public business leads.</p>
+        </div>
+        <button id="upload-button" class="secondary-button" type="button" disabled>Upload to Database</button>
+      </div>
+
+      <div id="message" class="message" aria-live="polite"></div>
+
+      <div class="lead-search-panel">
+        <label class="field suggestion-field">
+          <span>Search Generated Leads</span>
+          <input id="lead-search" type="text" placeholder="Search by business name, phone number, or location">
+          <div id="lead-suggestions" class="suggestions-box" hidden></div>
+        </label>
+      </div>
+
+      <div class="table-shell">
+        <table>
+          <thead>
+            <tr>
+              <th>Business Name</th>
+              <th>Location</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>Website</th>
+              <th>Social Media</th>
+            </tr>
+          </thead>
+          <tbody id="results-body">
+            <tr class="empty-row">
+              <td colspan="6">No leads yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
